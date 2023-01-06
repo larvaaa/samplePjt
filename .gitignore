@@ -2,5 +2,5 @@
 .project
 .springBeans
 .settings
-target/*
-**/global.properties
+target/
+global.properties
