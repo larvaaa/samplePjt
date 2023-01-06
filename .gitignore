@@ -3,4 +3,4 @@
 .springBeans
 .settings
 target/
-**/global.properties
+global.properties
