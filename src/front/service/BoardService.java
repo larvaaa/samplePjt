@@ -15,6 +15,7 @@ public class BoardService {
 	@Autowired
 	private BoardDao boardDao;
 	
+	
 	//글 작성
 	public int write(Map<String,String> parameterMap) {
 		
