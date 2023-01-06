@@ -23,7 +23,7 @@ public class BoardService {
 		
 	}
 	
-	//글 .수정
+	//글 수정
 	public int update(Map<String,String> parameterMap) {
 		
 		int result = boardDao.update(parameterMap);
