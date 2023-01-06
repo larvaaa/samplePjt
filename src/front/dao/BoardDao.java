@@ -32,5 +32,5 @@ public class BoardDao{
 	//게시판 목록 조회
 	public Map<String,String> getBoardDetail(HashMap<String,String> paramMap) {
 		return sqlSessoin.selectOne("BoardMapper.getBoardDetail",paramMap);
-	}	
+	}
 }

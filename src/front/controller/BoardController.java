@@ -30,7 +30,7 @@ import front.service.BoardService;
 public class BoardController {
 
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
-	
+
 	@Autowired
 	private BoardService boardService; 
 	
