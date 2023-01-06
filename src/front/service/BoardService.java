@@ -20,7 +20,7 @@ public class BoardService {
 		
 		int result = boardDao.write(parameterMap);
 		return result;
-		
+		 
 	}
 	
 	//글 수정
