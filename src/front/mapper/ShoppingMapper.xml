@@ -73,8 +73,7 @@
 	       , t1.REG_DATE
 	       , t1.MOD_ID
 	       , t1.MOD_DATE
-	       , t2.UPLOAD_FILE_NAME
-	       , t2.UPLOAD_PATH
+	       , t2.UPLOAD_PATH || '\' || t2.UPLOAD_FILE_NAME AS UPLOAD_FILE_PATH
 	    FROM BRAND t1
   INNER JOIN BRAND_IMAGE t2
           ON t1.ID = t2.ID

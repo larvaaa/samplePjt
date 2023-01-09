@@ -35,9 +35,9 @@ public class ShoppingService {
 	private String uploadFolder;
 	
 	//브랜드 조회
-	public HashMap<String,String> findBrand(String brandId) {
+	public List<Map<String,String>> findBrand(String brandId) {
 		
-		HashMap<String,String> findResult = shoppingDao.findBrand(brandId);
+		List<Map<String,String>> findResult = shoppingDao.findBrand(brandId);
 		
 		return findResult;
 	}
@@ -132,7 +132,7 @@ public class ShoppingService {
 				//1)fileName
 				attachFile.put("fileName", uploadFileName);
 				//2) uploadPath
-				attachFile.put("uploadPath", uploadPath.getPath());
+				attachFile.put("uploadPath", uploadPath.getPath().split(":")[1]);
 				//3) uuid
 				attachFile.put("uuid", uuid.toString());
 				//-------썸네일 처리 시작---------

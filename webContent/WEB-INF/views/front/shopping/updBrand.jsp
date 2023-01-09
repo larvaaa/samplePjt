@@ -20,20 +20,11 @@
 var sel_file = [];
 
 $(document).ready(function() {
-	setBrandInfo();
 	
 	//------------- 이미지 미리보기 시작 ------------------
     $("#brandImg").on("change", handleImgFileSelect);
 	
 });
-
-//브랜드 정보 세팅
-function setBrandInfo() {
-	
-	$("#brandName").val("${brandInfo.NAME}");
-// 	$(".img_wrap").append($("<img/>"), {src: "${brandInfo.UPLOAD_PATH}${brandInfo.UPLOAD_FILE_NAME}"});
-	
-}
 
 //Upload 버튼 클릭 시 수행
 function upload() {
@@ -150,7 +141,9 @@ function checkExtension(fileName, fileSize){
 </form>
 
 <div class="img_wrap">
-<img src="C:\tistory\upload\images\2023\01\03eade9c2c-b31c-431f-b1d0-6ffbbbf5061a-intel.png"/>
+<c:forEach var="brandInfo" items="${brandInfoList}">
+	<img src="${brandInfo.UPLOAD_FILE_PATH}"/>
+</c:forEach>
 </div>
 
 </body>

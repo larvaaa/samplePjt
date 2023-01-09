@@ -135,8 +135,8 @@ public class ShoppingController {
 	@RequestMapping(value="/moveBrandUpd", method=RequestMethod.GET)
 	public String moveBrandUpd(@RequestParam("brand_id") String brandId, Model model) {
 		
-		HashMap<String,String> findResult = shoppingService.findBrand(brandId);
-		model.addAttribute("brandInfo", findResult);
+		List<Map<String,String>> findResult = shoppingService.findBrand(brandId);
+		model.addAttribute("brandInfoList", findResult);
 		
 		return "/front/shopping/updBrand";
 		

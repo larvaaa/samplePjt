@@ -30,7 +30,7 @@ public class ShoppingDao{
 	}
 	
 	//브랜드 조회
-	public HashMap<String,String> findBrand(String brandId) {
-		return sqlSession.selectOne("ShoppingMapper.findBrand", brandId);
+	public List<Map<String,String>> findBrand(String brandId) {
+		return sqlSession.selectList("ShoppingMapper.findBrand", brandId);
 	}
 }
