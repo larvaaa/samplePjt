@@ -10,6 +10,26 @@
 <style>
 
 .btn {margin:10px;}
+
+.btn_file {
+  width: 150px;
+  height: 30px;
+  background: #fff;
+  border: 1px solid rgb(77,77,77);
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn_file:hover {
+  background: rgb(77,77,77);
+  color: #fff;
+}
+
+#brandImg {display:none;}
+
 </style>
 <title>네비게이션</title>
 
@@ -18,7 +38,7 @@
 <body>
 <script>
 var sel_file = [];
-
+let file_idx = 0;
 $(document).ready(function() {
 	
 	//------------- 이미지 미리보기 시작 ------------------
@@ -32,24 +52,24 @@ function upload() {
     //Ajax를 이용하는 파일 업로드는 FormData를 이용
     var formData = new FormData();
     //<input type="file" 요소
-    var inputFile = $("input[name='brandImages']");
+//     var inputFile = $("input[name='brandImages']");
     //<input type="file" 요소 내의 이미지들
     
-    console.log("inputFile[0]:::::::::::::" );
-    var files = inputFile[0].files;
+    //console.log("inputFile[0]:::::::::::::" );
     
     formData.append("brandName",$("input[name='brandName']").val());
-    console.log("files : " + files);
+    //console.log("files : " + files);
     
-    for(var i=0;i<files.length;i++){
-        console.log(files[i]);
+    for(var i=0;i<sel_file.length;i++){
+        //console.log(files[i]);
         //확장자, 크기 체크
         //function checkExtension(fileName, fileSize){
-        if(!checkExtension(files[i].name, files[i].size)){//!true라면 실패
+        var file = sel_file[i];
+        if(!checkExtension(file.name, file.size)){//!true라면 실패
             return false;
         }
         
-        formData.append("uploadFile",files[i]);
+        formData.append("uploadFile",file);
     }
     
     
@@ -74,7 +94,7 @@ function upload() {
 // change 이벤트 설정하면  e는 이벤트가 된다. handleImgFileSelect에 파라미터 주면 e가 이벤트가 아니라 그냥 파라미터가 됨.
 function handleImgFileSelect(e){
     
-    console.log("여길봐라: "+ JSON.stringify(e));
+    //console.log("여길봐라: "+ JSON.stringify(e));
     //e.target : 파일객체
     //e.target.files : 파일객체 안의 파일들
     var files = e.target.files;
@@ -82,20 +102,24 @@ function handleImgFileSelect(e){
     
     //f : 파일 객체
     filesArr.forEach(function(f){
-        //미리보기는 이미지만 가능함
+    	//console.log(f);
+    	//미리보기는 이미지만 가능함
         if(!f.type.match("image.*")){
             alert("이미지만 가능합니다");
             return;
         }
         
         // 파일객체 복사
-         sel_file.push(f);
-        
+        sel_file.push(f);
+        changeInputFile();
         //파일을 읽어주는 객체 생성
         var reader = new FileReader();
         reader.onload = function(e){
             //forEach 반복 하면서 img 객체 생성
-            var img_html = "<img src=\"" + e.target.result + "\" />";
+            var img_html = "<div>" +
+            "<img src=\"" + e.target.result + "\" />" +
+            "<button onclick='deleteFile(this)' data-file-name='"+ f.name +"'>X</button>" +
+            "</div>";
             $(".img_wrap").append(img_html);
         }
         reader.readAsDataURL(f);
@@ -123,6 +147,40 @@ function checkExtension(fileName, fileSize){
     return true;
 }
 
+//파일 삭제
+function deleteFile(obj) {
+    
+	let fileName = $(obj).data("file-name");
+    
+    sel_file.forEach((file,idx) => {
+    	if(file.name == fileName) {
+    		sel_file.splice(idx,1);
+    	}
+    });
+    
+    $(obj).parent().remove();
+    changeInputFile();
+    
+}
+
+//input[type="file"] 상태 변경
+function changeInputFile() {
+    
+    const dataTransfer = new DataTransfer();
+    
+    //let files = $('#brandImg')[0].files;    //사용자가 입력한 파일을 변수에 할당
+    
+    let fileArray = sel_file;  //변수에 할당된 파일을 배열로 변환(FileList -> Array)
+    
+    //fileArray.splice(fileNum, 1);   //해당하는 index의 파일을 배열에서 제거
+    
+    fileArray.forEach(file => {
+        dataTransfer.items.add(file); 
+    });
+    //남은 배열을 dataTransfer로 처리(Array -> FileList)
+    
+    $('#brandImg')[0].files = dataTransfer.files;   //제거 처리된 FileList를 돌려줌
+}
 </script>
 
 <form method="post" enctype="multipart/form-data">
@@ -131,11 +189,12 @@ function checkExtension(fileName, fileSize){
     <input type="text" class="form-control" id="brandName" name="brandName" placeholder="브랜드 명을 입력해주세요.">
   </div>
   <div class="form-group">
-    <label for="brandImg">파일 업로드</label>
+    <label>파일 업로드</label><br/>
+    <label for="brandImg"><div class="btn_file">파일찾기</div></label>
     <input type="file" id="brandImg" name="brandImages" multiple>
   </div>
   <button type="button" class="btn btn-default" onclick="upload();">등록</button>
-  <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/shopping/goBrand';">취소</button>
+  <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/shopping/goBrand'">취소</button>
 </form>
 
 <div class="img_wrap">

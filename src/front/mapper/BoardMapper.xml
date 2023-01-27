@@ -2,13 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="BoardMapper">
-
-	<select id="getData" resultType="Map"> 
-		SELECT NAME
-		     , GENDER
-		     , BIRTH
-		  FROM extable
-	</select>
 	
 	<select id="selectBoardList" parameterType="Map" resultType="Map">
 	  SELECT (SELECT count(*) FROM TBL_BOARD) AS "totalNum"
@@ -74,6 +67,7 @@
       ) 
 	</insert>
 	
+	<!-- 게시판 상세 -->
 	<select id="getBoardDetail" parameterType="Map" resultType="Map">
       SELECT BSEQ AS "bseq"
            , TITLE AS "title"
@@ -88,6 +82,7 @@
        WHERE BSEQ = #{bseq, jdbcType=VARCHAR}
     </select>
 	
+	<!-- 게시판 수정 -->
 	<update id="update" parameterType="Map">
       UPDATE TBL_BOARD
          SET TITLE = #{title, jdbcType=VARCHAR}
@@ -96,5 +91,46 @@
            , MOD_DATE = SYSDATE
        WHERE BSEQ = #{bseq, jdbcType=VARCHAR}
     </update>
+	
+	<!-- 댓글 작성 -->
+	<insert id="insertComment" parameterType="front.dto.CommentDto">
+	  INSERT INTO BBS_COMMENT(
+	      CSEQ
+	    , BSEQ
+	    , CGRP
+	    , CDEPTH
+	    , CONTENT
+	    , WRITER
+	    , REG_DATE
+	    , MOD_DATE
+	  ) VALUES (
+	      BBS_COMMENT_SEQ.NEXTVAL
+	    , #{bseq, jdbcType=VARCHAR}
+	    , #{cgrp, jdbcType=VARCHAR}
+	    , #{cdepth, jdbcType=VARCHAR}
+	    , #{content, jdbcType=VARCHAR}
+	    , #{writer, jdbcType=VARCHAR}
+	    , sysdate
+	    , sysdate
+      )
+	</insert>
+	
+	<!-- 댓글 리스트 조회 -->
+	<select id="selectCommentList" parameterType="front.dto.CommentDto" resultType="Map">
+		SELECT cseq
+             , bseq
+             , cgrp
+             , cdepth
+             , content
+             , writer
+             , reg_date
+             , mod_date
+          FROM bbs_comment
+         WHERE bseq = #{bseq, jdbcType=VARCHAR}
+         START WITH cdepth = 0
+       CONNECT BY PRIOR cseq = cgrp
+         ORDER SIBLINGS BY reg_date DESC
+	</select>
+	
 	
 </mapper>

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import front.dao.BoardDao;
+import front.dto.CommentDto;
 
 @Service
 public class BoardService {
@@ -48,9 +49,22 @@ public class BoardService {
 		return boardDao.selectBoardList(parameterMap);
 	}
 	
-	//게시판 목록 조회
+	//게시판 조회
 	public Map<String,String> getBoardDetail(HashMap<String,String> paramMap) {
 		return boardDao.getBoardDetail(paramMap);
 	}
+
+	//댓글 작성
+	public int insertComment(CommentDto commentDto) {
+		
+		return boardDao.insertComment(commentDto);
+		
+	}
+	
+	//댓글 리스트 조회
+	public List<Map<String,Object>> selectCommentList(CommentDto commentDto) {
+		return boardDao.selectCommentList(commentDto);
+	}
+	
 	
 }

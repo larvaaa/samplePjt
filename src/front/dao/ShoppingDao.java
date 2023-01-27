@@ -8,6 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import front.dto.BrandDto;
+
 @Repository
 public class ShoppingDao{
 
@@ -20,7 +22,7 @@ public class ShoppingDao{
 	}
 
 	//브랜드 이미지 추가
-	public int insertBrandImage(Map<String, String> brandImage) {
+	public int insertBrandImage(Map<String, Object> brandImage) {
 		return sqlSession.insert("ShoppingMapper.insertBrandImage", brandImage);
 	}
 
@@ -32,5 +34,15 @@ public class ShoppingDao{
 	//브랜드 조회
 	public List<Map<String,String>> findBrand(String brandId) {
 		return sqlSession.selectList("ShoppingMapper.findBrand", brandId);
+	}
+	
+	//브랜드 수정
+	public int updateBrand(BrandDto brandDto) {
+		return sqlSession.update("ShoppingMapper.updateBrand", brandDto);
+	}
+	
+	//브랜드 이미지 수정
+	public int deleteBrandImage(HashMap<String,Object> parameterMap) {
+		return sqlSession.delete("ShoppingMapper.deleteBrandImage", parameterMap);
 	}
 }

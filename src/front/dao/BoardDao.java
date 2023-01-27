@@ -8,6 +8,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import front.dto.CommentDto;
+
 @Repository
 public class BoardDao{
 
@@ -29,8 +31,18 @@ public class BoardDao{
 		return sqlSessoin.insert("BoardMapper.update",parameterMap);
 	}
 	
-	//게시판 목록 조회
+	//게시판 조회
 	public Map<String,String> getBoardDetail(HashMap<String,String> paramMap) {
 		return sqlSessoin.selectOne("BoardMapper.getBoardDetail",paramMap);
+	}
+
+	//댓글 작성
+	public int insertComment(CommentDto commentDto) {
+		return sqlSessoin.insert("BoardMapper.insertComment",commentDto);
+	}
+	
+	//댓글 리스트 조회
+	public List<Map<String,Object>> selectCommentList(CommentDto commentDto) {
+		return sqlSessoin.selectList("BoardMapper.selectCommentList",commentDto);
 	}
 }

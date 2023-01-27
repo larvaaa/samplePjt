@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import common.Const;
 import common.util.ConvertUtil;
+import front.dto.CommentDto;
 import front.service.BoardService;
 
 @Controller
@@ -102,14 +104,14 @@ public class BoardController {
 		return mav;
 	}
 	
-	//글쓰기 페이지 이동
+	//게시판 상세 조회
 	@RequestMapping(value="goBoardDetail", method=RequestMethod.GET) 
 	public ModelAndView goBoardDetail(HttpServletRequest request, HttpServletResponse response) {
 		
 		ModelAndView mav = new ModelAndView();
 		HashMap<String,String> paramMap = new HashMap<String,String>();
 		
-		String bseq =  request.getParameter("bseq"); //게시판 번호
+		String bseq = request.getParameter("bseq"); //게시판 번호
 		
 		paramMap.put("bseq", bseq);
 		Map<String,String> boardDetailMap = boardService.getBoardDetail(paramMap);
@@ -180,4 +182,45 @@ public class BoardController {
 		
 		return resultMap; 
 	}
+	
+	//댓글작성
+	@ResponseBody
+	@RequestMapping(value="/insertComment" , method=RequestMethod.POST)
+	public Map<String,String> insertComment(@RequestBody CommentDto commentDto, HttpSession session) {
+		
+		Map<String,String> resultMap = new HashMap<String,String>();
+		String result_cd = "";
+		
+		try {
+			
+			Map<String,String> userInfo = ConvertUtil.ObjectToMap(session.getAttribute("userInfo"));
+			commentDto.setWriter(userInfo.get("custId"));
+			
+			int Result = boardService.insertComment(commentDto);
+			
+			if(Result > 0) {
+				result_cd = Const.SUCCESS_CD;
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			result_cd = Const.FAIL_CD;
+		}
+		
+		resultMap.put("result_cd", result_cd);
+		
+		return resultMap; 
+	}
+	
+	//댓글 리스트 조회
+	@RequestMapping("/selectCommentList")
+	public String selectCommentList(@ModelAttribute CommentDto commentDto, Model model) {
+		
+		List<Map<String,Object>> commentList = boardService.selectCommentList(commentDto);
+		model.addAttribute("commentList",commentList);
+		
+		return "/front/board/include/comment";
+	}
+	
+	
 }

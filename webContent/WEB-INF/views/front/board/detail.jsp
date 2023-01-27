@@ -6,6 +6,10 @@
 <%@ include file="/WEB-INF/views/header.jsp" %>
 <head>
 
+<style>
+ .write_comment {margin-bottom:50px;}
+</style>
+
 </head>
 <body>
 <%-- <%
@@ -21,7 +25,13 @@ for(Cookie cookie : cookies) {
 
 
 <script>
+
+var bseq = "${board_detail.bseq}";
+
 $(document).ready(function() {
+	
+	//댓글 리스트 조회
+	selectCommentList();
 	
 	//작성버튼클릭
 	$("#upd_btn").click(function() {
@@ -35,7 +45,6 @@ $(document).ready(function() {
 //글작성
 function update() {
 	
-	var bseq = "${board_detail.bseq}";
 	var title = $("#tit").val();
 	var content = $("#cont").val();
 	
@@ -69,6 +78,54 @@ function clickCancelBtn() {
 	history.back();
 }
 
+//댓글작성
+function insertComment() {
+    
+    let param = {
+	    "content" : $("#write_comment > textarea").val(),
+	    "bseq" : bseq,
+	    "cdepth" : "0"
+    }
+    
+    $.ajax({
+        url: "${pageContext.request.contextPath}/board/insertComment",
+        type: "post",
+        //processData:false,
+        //contentType:false,
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(param),
+        success: function(data){
+            if(data.result_cd == "S") {
+                alert("댓글 작성 완료했습니다.");
+            	selectCommentList();
+            } else {
+                alert("오류가 발생했습니다.");
+            }
+        }
+    });
+
+}
+
+//댓글 리스트 조회
+function selectCommentList() {
+
+	$.ajax({
+	    url: "${pageContext.request.contextPath}/board/selectCommentList",
+	    type: "post",
+	    dataType: "html",
+	    data: {"bseq" : bseq},
+	    success: function(data){
+	    	$(".div_comment").html(data);
+	    	
+	        /* if(data.result_cd == "S") {
+	            alert("수정 완료했습니다.");
+	        } else {
+	            alert("오류가 발생했습니다.");
+	        } */
+	    }
+	});
+}
 
 </script>
 <!-- Page content-->
@@ -84,5 +141,17 @@ function clickCancelBtn() {
     <button id="upd_btn" type="button" class="btn btn-primary">수정</button>
     <button onclick="clickCancelBtn()" type="button" class="btn btn-danger">취소</button>
   </form>
+  
+  <label for="write_comment">댓글작성</label>
+  <div class="write_comment" id="write_comment">
+    <textarea class="form-control" rows="3"></textarea>
+    <button onclick="insertComment()">등록</button>
+  </div>
+  
+  <div class="div_comment">
+    
+  </div>
+  
+  
 </body>
 </html>

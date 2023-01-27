@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import common.Const;
 import common.util.ConvertUtil;
+import front.dto.BrandDto;
 import front.service.ShoppingService;
 
 @Controller
@@ -106,7 +108,7 @@ public class ShoppingController {
 	//브랜드 등록
 	@ResponseBody
 	@RequestMapping(value="/addBrand", method=RequestMethod.POST)
-	public Map<String,String> addBrand(@RequestParam(value="uploadFile") MultipartFile[] uploadFile, HttpServletRequest request) throws Exception {
+	public Map<String,String> addBrand(@RequestParam(value="uploadFile", required=false) MultipartFile[] uploadFile, HttpServletRequest request) throws Exception {
 		
 		HashMap<String,String> parameterMap = new HashMap<>();
 		HashMap<String,String> resultMap = new HashMap<>();
@@ -141,4 +143,30 @@ public class ShoppingController {
 		return "/front/shopping/updBrand";
 		
 	}
+	
+	//브랜드 수정
+	@ResponseBody
+	@RequestMapping(value="/updateBrand", method=RequestMethod.POST)
+	public HashMap<String,String> updateBrand(@ModelAttribute BrandDto brandDto, HttpSession session) {
+		
+		HashMap<String,String> resultMap = new HashMap<>();
+		Map<String,String> userInfo = ConvertUtil.ObjectToMap(session.getAttribute("userInfo"));
+		brandDto.setCustId(userInfo.get("custId"));
+		String result_cd = Const.SUCCESS_CD;
+		
+		try {
+
+			shoppingService.updateBrand(brandDto);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			result_cd = Const.FAIL_CD;
+		}
+		resultMap.put("result_cd", result_cd);
+		
+		
+		return resultMap;
+		
+	}
+	
 }

@@ -68,6 +68,8 @@ function moveBrandUpd(brand_id) {
 function deleteBrand(id) {
 	
 	
+	
+	
 }
 
 </script>

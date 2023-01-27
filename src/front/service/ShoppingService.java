@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import front.dao.ShoppingDao;
+import front.dto.BrandDto;
 import net.coobird.thumbnailator.Thumbnailator;
 
 @Service
@@ -75,7 +76,7 @@ public class ShoppingService {
 
 					if(uploadFile[i].getSize() > 0) { //i번째 요소에 업로드된 이미지가 있을 경우
 
-						Map<String,String> brandImage = new HashMap<>();
+						Map<String,Object> brandImage = new HashMap<>();
 						
 						brandImage.put("brand_id", brandId);
 						brandImage.put("upload_file_name", String.valueOf(uploadList.get(i).get("fileName")));
@@ -132,7 +133,7 @@ public class ShoppingService {
 				//1)fileName
 				attachFile.put("fileName", uploadFileName);
 				//2) uploadPath
-				attachFile.put("uploadPath", uploadPath.getPath().split(":")[1]);
+				attachFile.put("uploadPath", uploadPath.getPath());
 				//3) uuid
 				attachFile.put("uuid", uuid.toString());
 				//-------썸네일 처리 시작---------
@@ -184,6 +185,63 @@ public class ShoppingService {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	//브랜드 수정
+	@Transactional
+	public void updateBrand(BrandDto brandDto) {
+		
+		MultipartFile[] uploadFile = brandDto.getUploadFile();
+		
+		//브랜드 테이블 수정
+		shoppingDao.updateBrand(brandDto);
+		
+		if(brandDto.getDeleteFile() != null) {
+			
+			//브랜드 이미지 삭제
+			for(String deletefile : brandDto.getDeleteFile()) {
+				HashMap<String,Object> parameterMap = new HashMap<>();
+				
+				deletefile = "D:" + deletefile;
+				
+				logger.info("deletefile: " + deletefile);
+				File file = new File(deletefile);
+				boolean result = file.delete();
+				
+				logger.info("deletefile_s: " + file.getParent() + "s_" + file.getName());
+				File thumbnail = new File(file.getParent() + "\\s_" + file.getName());
+				//getParent() - 현재 File 객체가 나태내는 파일의 디렉토리의 부모 디렉토리의 이름 을 String으로 리턴해준다.
+				result = thumbnail.delete();
+				
+				parameterMap.put("id", brandDto.getBrandId());
+				parameterMap.put("upload_path", deletefile.substring(0,deletefile.lastIndexOf("\\")));
+				parameterMap.put("upload_file_name", deletefile.substring(deletefile.lastIndexOf("\\") + 1));
+				shoppingDao.deleteBrandImage(parameterMap);
+			}
+		}
+		
+		//브랜드 이미지 추가
+		if(uploadFile != null) {
+			List<Map<String,Object>> uploadList = uploadAction(uploadFile);
+			
+			if(!uploadList.isEmpty()) {
+				for(int i = 0; i < uploadFile.length; i++) {
+
+					if(uploadFile[i].getSize() > 0) { //i번째 요소에 업로드된 이미지가 있을 경우
+
+						Map<String,Object> brandImage = new HashMap<>();
+						
+						brandImage.put("brand_id", brandDto.getBrandId());
+						brandImage.put("upload_file_name", String.valueOf(uploadList.get(i).get("fileName")));
+						brandImage.put("upload_path", String.valueOf(uploadList.get(i).get("uploadPath")));
+						brandImage.put("cust_id", brandDto.getCustId());
+						
+						shoppingDao.insertBrandImage(brandImage);
+					}
+				}
+			}
+		}
+		
 	}
 
 }
