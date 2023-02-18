@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CategoryMapper">
+	
+	<resultMap id="CategoryDtoMap" type="CategoryDto">
+	  <id property="id" column="category_id" />
+	  <result property="parentId" column="parent_id"/>
+	  <result property="useYn" column="use_yn"/>
+    </resultMap>
+	
+	
+	<!-- 카테고리 등록 -->
+	<insert id="insertCategory" parameterType="CategoryDto">
+	  INSERT INTO category(category_id, name, parent_id, seq, depth, use_yn)
+	  VALUES (
+	    category_seq.nextval,
+	    #{name, jdbcType=VARCHAR},
+	    #{parentId, jdbcType=VARCHAR},
+	    #{seq, jdbcType=VARCHAR},
+	    #{depth, jdbcType=VARCHAR},
+	    #{useYn, jdbcType=VARCHAR}
+	  )
+      
+      <selectKey keyProperty="id" order="AFTER" resultType="long">
+        SELECT CATEGORY_SEQ.CURRVAL AS ID FROM DUAL
+      </selectKey>
+	</insert>
+    
+    <!-- 상위 카테고리 조회 -->
+    <select id="selectParent" resultMap="CategoryDtoMap">
+      SELECT category_id
+	       , name
+	       , parent_id
+	       , seq
+	       , depth
+	       , use_yn
+	    FROM category
+	   WHERE depth = #{depth, jdbcType=INTEGER}
+	ORDER BY seq
+    </select>
+    
+    <!-- 카테고리 목록 조회 -->
+    <select id="selectCateList" resultMap="CategoryDtoMap">
+      SELECT category_id
+           , decode(depth,1,' ' || name, 2, '  ' || name, 3, '   ' || name) AS name
+           , parent_id
+           , seq
+           , depth
+           , use_yn
+	    FROM category
+	   START WITH depth = 1
+	 CONNECT BY PRIOR category_id = parent_id
+	   ORDER SIBLINGS BY seq
+    </select>
+    
+</mapper>

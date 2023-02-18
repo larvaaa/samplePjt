@@ -14,35 +14,35 @@ import front.dto.CommentDto;
 public class BoardDao{
 
 	@Autowired
-	private SqlSession sqlSessoin;
+	private SqlSession sqlSession;
 	
 	//게시판 목록 조회
 	public List<Map<String,Object>> selectBoardList(Map<String,String> parameterMap) {
-		return sqlSessoin.selectList("BoardMapper.selectBoardList",parameterMap);
+		return sqlSession.selectList("BoardMapper.selectBoardList",parameterMap);
 	}
 	
 	//글 작성
 	public int write(Map<String,String> parameterMap) {
-		return sqlSessoin.insert("BoardMapper.write",parameterMap);
+		return sqlSession.insert("BoardMapper.write",parameterMap);
 	}
 	
 	//글 수정
 	public int update(Map<String,String> parameterMap) {
-		return sqlSessoin.insert("BoardMapper.update",parameterMap);
+		return sqlSession.insert("BoardMapper.update",parameterMap);
 	}
 	
 	//게시판 조회
 	public Map<String,String> getBoardDetail(HashMap<String,String> paramMap) {
-		return sqlSessoin.selectOne("BoardMapper.getBoardDetail",paramMap);
+		return sqlSession.selectOne("BoardMapper.getBoardDetail",paramMap);
 	}
 
 	//댓글 작성
 	public int insertComment(CommentDto commentDto) {
-		return sqlSessoin.insert("BoardMapper.insertComment",commentDto);
+		return sqlSession.insert("BoardMapper.insertComment",commentDto);
 	}
 	
 	//댓글 리스트 조회
 	public List<Map<String,Object>> selectCommentList(CommentDto commentDto) {
-		return sqlSessoin.selectList("BoardMapper.selectCommentList",commentDto);
+		return sqlSession.selectList("BoardMapper.selectCommentList",commentDto);
 	}
 }

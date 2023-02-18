@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 public class MainDao{
 
 	@Autowired
-	private SqlSession sqlSessoin;
+	private SqlSession sqlSession;
 	
 	public List<Map<String,Object>> getData() {
-		return sqlSessoin.selectList("MainMapper.getData");
+		return sqlSession.selectList("MainMapper.getData");
 	}
 }

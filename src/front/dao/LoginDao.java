@@ -12,15 +12,15 @@ import org.springframework.stereotype.Repository;
 public class LoginDao{
 
 	@Autowired
-	private SqlSession sqlSessoin;
+	private SqlSession sqlSession;
 	
 	public List<Map<String,Object>> getData() {
-		return sqlSessoin.selectList("MainMapper.getData");
+		return sqlSession.selectList("MainMapper.getData");
 	}
 	
 	public HashMap<String,String> doLogin(HashMap<String,String> parameterMap) {
 		
-		HashMap<String,String> map = sqlSessoin.selectOne("LoginMapper.doLogin",parameterMap);
+		HashMap<String,String> map = sqlSession.selectOne("LoginMapper.doLogin",parameterMap);
 		
 		return map;
 	}

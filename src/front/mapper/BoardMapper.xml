@@ -28,7 +28,7 @@
                        WHERE t2.CUST_ID = t1.REG_ID) AS REG_ID
                    , TO_CHAR(REG_DATE,'YYYY-MM-DD hh24:mi') AS REG_DATE
                    , MOD_ID 
-                   , TO_CHAR(MOD_DATE,'YYYY-MM-DD hh24:mi') AS MOD_DATE 
+                   , TO_CHAR(MOD_DATE,'YYYY-MM-DD hh24:mi') AS MOD_DATE
                 FROM TBL_BOARD t1
                ORDER BY BSEQ DESC
                  ) z
@@ -129,7 +129,7 @@
          WHERE bseq = #{bseq, jdbcType=VARCHAR}
          START WITH cdepth = 0
        CONNECT BY PRIOR cseq = cgrp
-         ORDER SIBLINGS BY reg_date DESC
+         ORDER SIBLINGS BY reg_date
 	</select>
 	
 	

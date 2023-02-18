@@ -52,7 +52,7 @@ public class ShoppingController {
 		}
 		
 		model.addAttribute("page", page);
-		return "/front/shopping/brand";
+		return "/front/shopping/brand/brand";
 		
 	}
 	
@@ -90,7 +90,7 @@ public class ShoppingController {
 		mv.addObject("pageNum", pageNum);
 		mv.addObject("brand_list", boardList);
 		mv.addObject("endPage", endPage);
-		mv.setViewName("/front/shopping/include/brandList");
+		mv.setViewName("/front/shopping/brand/include/brandList");
 //		resultMap.put("brand_list", boardList);
 //		resultMap.put("result_cd", result_cd);
 		
@@ -101,7 +101,7 @@ public class ShoppingController {
 	@RequestMapping(value="/addBrand", method=RequestMethod.GET)
 	public String addBrand() {
 		
-		return "/front/shopping/addBrand";
+		return "/front/shopping/brand/addBrand";
 		
 	}
 	
@@ -140,7 +140,7 @@ public class ShoppingController {
 		List<Map<String,String>> findResult = shoppingService.findBrand(brandId);
 		model.addAttribute("brandInfoList", findResult);
 		
-		return "/front/shopping/updBrand";
+		return "/front/shopping/brand/updBrand";
 		
 	}
 	
